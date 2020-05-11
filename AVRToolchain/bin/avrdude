@@ -1,0 +1,4 @@
+#!/bin/zsh
+BIN_DIR=$(dirname $0)
+CONF="$BIN_DIR/../etc/avrdude.conf"
+$BIN_DIR/avrdude_orig -C $CONF $@
