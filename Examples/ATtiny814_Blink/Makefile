@@ -1,9 +1,13 @@
-TARGET		= project
-CLOCK		= 2000000 # configured in main
-SOURCES		= main.c
+TARGET = project
+MCU = attiny814
+DEVICE = tiny814
+# clock settings applied in main.c
+CLOCK = 2000000
+PROGRAMMER = /dev/tty.usbserial-A50285BI
 
+SOURCES = main.c
 OBJECTS = $(SOURCES:.c=.o)
-COMPILE = avr-gcc -Wall -Os -DF_CPU=$(CLOCK) -D__AVR_DEVICE_NAME__=attiny814 -D__AVR_DEV_LIB_NAME__=tn814
+COMPILE = avr-gcc -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(MCU)
 
 # compiling and linking, target is the finished hex file
 all: $(TARGET).hex
@@ -18,7 +22,11 @@ $(TARGET).elf: $(OBJECTS)
 
 # convert elf file to hex file
 $(TARGET).hex: $(TARGET).elf
-	avr-objcopy -O ihex -j .data -j .text $(TARGET).elf $(TARGET).hex
+	avr-objcopy -j .text -j .data -j .rodata -O ihex $(TARGET).elf $(TARGET).hex
+
+# flash (call make flash), requires pyupdi installed
+flash: $(TARGET).hex
+	python3 -m updi.pyupdi -d $(DEVICE) -c $(PROGRAMMER) -f "$(shell pwd)/$(TARGET).hex"
 
 clean:
 	rm -f $(TARGET).hex $(TARGET).elf $(OBJECTS)
