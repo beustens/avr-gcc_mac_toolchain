@@ -2,11 +2,10 @@
 #include <util/delay.h>
 
 int main() {
-	// disable protection to configure clock frequency
-	CCP = CCP_IOREG_gc;
-	
-	// configure CPU frequency
+	// configure CPU frequency to 2MHz
+	CCP = CCP_IOREG_gc; // disable protection to configure clock frequency
 	CLKCTRL.MCLKCTRLA = CLKCTRL_CLKSEL_OSC20M_gc; // use 20 MHz internal clock as source
+	CCP = CCP_IOREG_gc; // disable protection to configure clock frequency
 	CLKCTRL.MCLKCTRLB = CLKCTRL_PDIV_10X_gc | CLKCTRL_PEN_bm; // divide by 10 and enable divider
 	
 	// configure IO for driving LED
